@@ -78,6 +78,7 @@ inline void *vec_push(vector *v, usize stride) {
 	if (v->len + stride > v->cap) {
 		vec_reserve(v, v->len + stride);
 	}
+	assert(v->buf != NULL);
 	usize oldlen = v->len;
 	v->len += stride;
 	return (u8*)v->buf + oldlen;
@@ -85,7 +86,9 @@ inline void *vec_push(vector *v, usize stride) {
 
 inline void *vec_pop(vector *v, usize stride) {
 	assert(v->buf != NULL);
-	assert(v->len != 0);
+	if (v->len == 0) {
+		return NULL;
+	}
 	v->len -= stride;
 	return (u8*)v->buf + v->len;
 }
