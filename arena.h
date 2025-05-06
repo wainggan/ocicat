@@ -5,18 +5,18 @@
 #include "alloc.h"
 
 
-typedef struct OciArena {
+typedef struct oci_arena {
 	void *buf;
 	void *end;
 	void *ptr;
-	OciAllocator *alloc;	
-} OciArena;
+	oci_allocator *alloc;	
+} oci_arena;
 
-OciArena oci_arena_new(OciAllocator *alloc, usize size);
-void oci_arena_free(OciArena *arena);
-OciAllocator oci_arena_allocator(OciArena *arena);
+oci_arena oci_arena_new(oci_allocator *alloc, usize size);
+void oci_arena_free(oci_arena *arena);
+oci_allocator oci_arena_allocator(oci_arena *arena);
 
-void *oci_arena_alloc(OciArena *arena, usize size);
+void *oci_arena_alloc(oci_arena *arena, usize size);
 
 
 #endif

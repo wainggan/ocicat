@@ -6,15 +6,15 @@
 #include "assert.h"
 
 
-inline String string_new(OciAllocator *alloc) {
-	String string = {
-		.vec = v_new(VecStr, alloc),
+inline oci_string string_new(oci_allocator *alloc) {
+	oci_string string = {
+		.vec = v_new(_vecstr, alloc),
 	};
 	return string;
 }
 
-String string_from(OciAllocator *alloc, str s) {
-	String string = string_new(alloc);
+oci_string string_from(oci_allocator *alloc, str s) {
+	oci_string string = string_new(alloc);
 	v_reserve_exact(&string.vec, s.len + 1);
 
 	char *data = v_ptr(&string.vec);
@@ -29,21 +29,21 @@ String string_from(OciAllocator *alloc, str s) {
 	return string;
 }
 
-inline void string_free(String *string) {
+inline void string_free(oci_string *string) {
 	assert(string != NULL);
 	v_free(&string->vec);
 }
 
-inline const char *string_ptr(const String *string) {
+inline const char *string_ptr(const oci_string *string) {
 	assert(string != NULL);
 	return v_ptr(&string->vec);
 }
-inline usize string_len(const String *string) {
+inline usize string_len(const oci_string *string) {
 	assert(string != NULL);
-	return v_len(&string->vec) - 1; // null terminator
+	return v_len(&string->vec);
 }
 
-void string_append(String *string, str other) {
+void string_append(oci_string *string, str other) {
 	usize newlen = v_len(&string->vec) + other.len;
 
 	v_reserve(&string->vec, newlen + 1);
@@ -58,8 +58,8 @@ void string_append(String *string, str other) {
 	data[newlen] = '\0';
 }
 
-String string_concat(OciAllocator *alloc, str a, str b) {
-	String string = string_new(alloc);
+oci_string string_concat(oci_allocator *alloc, str a, str b) {
+	oci_string string = string_new(alloc);
 	v_reserve_exact(&string.vec, a.len + b.len + 1);
 
 	char *data = v_ptr(&string.vec);
@@ -90,12 +90,12 @@ inline str str_c(const char *chr) {
 	return str_from(chr, strlen(chr));
 }
 
-inline str str_s(const String *string) {
+inline str str_s(const oci_string *string) {
 	assert(string != NULL);
 	return str_from(string_ptr(string), string_len(string));
 }
 
-inline String str_to_string(OciAllocator *alloc, str s) {
+inline oci_string str_to_string(oci_allocator *alloc, str s) {
 	return string_from(alloc, s);
 }
 

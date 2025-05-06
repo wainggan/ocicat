@@ -5,13 +5,13 @@
 #include "vec.h"
 
 // internal vector type
-typedef vec(char) VecStr;
+typedef v_vec(char) _vecstr;
 
 // heap allocated, immutable string type.
 // garanteed to be null terminated.
-typedef struct String {
-	VecStr vec;
-} String;
+typedef struct oci_string {
+	_vecstr vec;
+} oci_string;
 
 // string slice.
 // may or may not be correctly null terminated.
@@ -21,20 +21,20 @@ typedef struct str {
 } str;
 
 
-String string_new(OciAllocator *alloc);
-String string_from(OciAllocator *alloc, str s);
-void string_free(String *string);
+oci_string string_new(oci_allocator *alloc);
+oci_string string_from(oci_allocator *alloc, str s);
+void string_free(oci_string *string);
 
-const char *string_ptr(const String *string);
-usize string_len(const String *string);
+const char *string_ptr(const oci_string *string);
+usize string_len(const oci_string *string);
 
-void string_append(String *string, str other);
-String string_concat(OciAllocator *alloc, str a, str b);
+void string_append(oci_string *string, str other);
+oci_string string_concat(oci_allocator *alloc, str a, str b);
 
 str str_from(const char *chr, usize len);
 str str_c(const char *chr);
-str str_s(const String *string);
-String str_to_string(OciAllocator *alloc, str s);
+str str_s(const oci_string *string);
+oci_string str_to_string(oci_allocator *alloc, str s);
 
 const char *str_ptr(str s);
 usize str_len(str s);

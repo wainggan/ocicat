@@ -4,15 +4,15 @@
 #include "stdlib.h"
 
 
-inline void *oci_malloc(OciAllocator *alloc, usize size) {
+inline void *oci_malloc(oci_allocator *alloc, usize size) {
 	return alloc->alloc(alloc->data, NULL, 0, size);
 }
 
-inline void *oci_realloc(OciAllocator *alloc, void* ptr, usize old, usize new) {
+inline void *oci_realloc(oci_allocator *alloc, void* ptr, usize old, usize new) {
 	return alloc->alloc(alloc->data, ptr, old, new);
 }
 
-inline void oci_free(OciAllocator *alloc, void *ptr, usize old) {
+inline void oci_free(oci_allocator *alloc, void *ptr, usize old) {
 	alloc->alloc(alloc->data, ptr, old, 0);
 }
 
@@ -30,8 +30,8 @@ static void *inner_cstd_alloc(void *data, void *ptr, usize old, usize new) {
 	}
 }
 
-OciAllocator oci_cstd_allocator() {
-	return (OciAllocator) {
+oci_allocator oci_cstd_allocator() {
+	return (oci_allocator) {
 		.alloc = inner_cstd_alloc,
 		.data = NULL,
 	};

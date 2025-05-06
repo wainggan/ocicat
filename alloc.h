@@ -3,18 +3,18 @@
 
 #include "type.h"
 
-typedef void *(OciAlloc)(void *data, void *ptr, usize old, usize new);
+typedef void *(oci_allocfn)(void *data, void *ptr, usize old, usize new);
 
-typedef struct OciAllocator {
-	OciAlloc *alloc;
+typedef struct oci_allocator {
+	oci_allocfn *alloc;
 	void *data;
-} OciAllocator;
+} oci_allocator;
 
-void *oci_malloc(OciAllocator *alloc, usize size);
-void *oci_realloc(OciAllocator *alloc, void* ptr, usize old, usize new);
-void oci_free(OciAllocator *alloc, void* ptr, usize old);
+void *oci_malloc(oci_allocator *alloc, usize size);
+void *oci_realloc(oci_allocator *alloc, void* ptr, usize old, usize new);
+void oci_free(oci_allocator *alloc, void* ptr, usize old);
 
-OciAllocator oci_cstd_allocator();
+oci_allocator oci_cstd_allocator();
 
 
 #endif

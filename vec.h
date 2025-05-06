@@ -6,45 +6,45 @@
 
 
 // vector struct
-typedef struct Vec {
+typedef struct vector {
 	void *buf;
 	// capacity in bytes
 	usize cap;
 	// length in bytes
 	usize len;
 	// associated allocator
-	OciAllocator *alloc;
-} Vec;
+	oci_allocator *alloc;
+} vector;
 
 // creates a new Vec. no allocation will be done until neccessary.
-Vec vec_new(OciAllocator *alloc);
+vector vec_new(oci_allocator *alloc);
 // if the Vec allocated memory, that memory will be freed here.
-void vec_free(Vec *v);
+void vec_free(vector *v);
 
 // attempts to allocate such that the Vec's capacity is at least the size passed in.
-void vec_reserve_exact(Vec *v, usize capacity);
+void vec_reserve_exact(vector *v, usize capacity);
 // like vec_reserve_exact(), except it may over-allocate.
-void vec_reserve(Vec *v, usize capacity);
+void vec_reserve(vector *v, usize capacity);
 
 // gets a pointer to the Vec's allocated memory.
-void *vec_ptr(const Vec *v);
+void *vec_ptr(const vector *v);
 // gets the Vec's allocated capacity.
-usize vec_cap(const Vec *v, usize stride);
+usize vec_cap(const vector *v, usize stride);
 // gets the Vec's length.
-usize vec_len(const Vec *v, usize stride);
+usize vec_len(const vector *v, usize stride);
 // sets the Vec's length.
-void vec_len_set(Vec *v, usize stride, usize len);
+void vec_len_set(vector *v, usize stride, usize len);
 
-void *vec_index(const Vec *v, usize stride, usize index); 
+void *vec_index(const vector *v, usize stride, usize index); 
 
-void *vec_push(Vec *v, usize stride);
-void *vec_pop(Vec *v, usize stride);
+void *vec_push(vector *v, usize stride);
+void *vec_pop(vector *v, usize stride);
 
-void *vec_insert(Vec *v, usize stride, usize index);
-void vec_remove(Vec *v, usize stride, usize index);
+void *vec_insert(vector *v, usize stride, usize index);
+void vec_remove(vector *v, usize stride, usize index);
 
 
-#define vec(type) union { typeof(type) *T; Vec _; }
+#define v_vec(type) union { typeof(type) *T; vector _; }
 
 #define OCI_VEC_TYPEOF(v) typeof(*(v)->T)
 #define OCI_VEC_DATAOF(v) &(v)->_
