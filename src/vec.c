@@ -7,8 +7,8 @@
 #include "assert.h"
 
 
-inline vector vec_new(oci_allocator *alloc) {
-	return (vector) {
+inline oci_vector vec_new(oci_allocator *alloc) {
+	return (oci_vector) {
 		.buf = NULL,
 		.cap = 0,
 		.len = 0,
@@ -16,14 +16,14 @@ inline vector vec_new(oci_allocator *alloc) {
 	};
 }
 
-inline void vec_free(vector *v) {
+inline void vec_free(oci_vector *v) {
 	if (v->buf != NULL) {
 		oci_free(v->alloc, v->buf, v->cap);
 		v->buf = NULL;
 	}
 }
 
-void vec_reserve_exact(vector *v, usize capacity) {
+void vec_reserve_exact(oci_vector *v, usize capacity) {
 	if (capacity <= v->cap) {
 		return;
 	}
@@ -41,7 +41,7 @@ void vec_reserve_exact(vector *v, usize capacity) {
 	v->cap = capacity;
 }
 
-void vec_reserve(vector *v, usize capacity) {
+void vec_reserve(oci_vector *v, usize capacity) {
 	usize newcap = v->cap;
 	if (newcap < 4) {
 		newcap = 4;
@@ -52,29 +52,29 @@ void vec_reserve(vector *v, usize capacity) {
 	vec_reserve_exact(v, newcap);
 }
 
-inline void *vec_ptr(const vector *vec) {
+inline void *vec_ptr(const oci_vector *vec) {
 	return vec->buf;
 }
 
-inline usize vec_cap(const vector *vec, usize stride) {
+inline usize vec_cap(const oci_vector *vec, usize stride) {
 	return vec->cap / stride;
 }
 
-inline usize vec_len(const vector *vec, usize stride) {
+inline usize vec_len(const oci_vector *vec, usize stride) {
 	return vec->len / stride;
 }
 
-inline void vec_len_set(vector *vec, usize stride, usize len) {
+inline void vec_len_set(oci_vector *vec, usize stride, usize len) {
 	vec->len = len / stride;
 }
 
-inline void *vec_index(const vector *v, usize stride, usize index) {
+inline void *vec_index(const oci_vector *v, usize stride, usize index) {
 	assert(v->buf != NULL);
 	assert(index * stride < v->len);
 	return (u8*)v->buf + index * stride;
 }
 
-inline void *vec_push(vector *v, usize stride) {
+inline void *vec_push(oci_vector *v, usize stride) {
 	if (v->len + stride > v->cap) {
 		vec_reserve(v, v->len + stride);
 	}
@@ -84,7 +84,7 @@ inline void *vec_push(vector *v, usize stride) {
 	return (u8*)v->buf + oldlen;
 }
 
-inline void *vec_pop(vector *v, usize stride) {
+inline void *vec_pop(oci_vector *v, usize stride) {
 	assert(v->buf != NULL);
 	if (v->len == 0) {
 		return NULL;
@@ -93,13 +93,13 @@ inline void *vec_pop(vector *v, usize stride) {
 	return (u8*)v->buf + v->len;
 }
 
-inline void *vec_insert(vector *v, usize stride, usize index) {
+inline void *vec_insert(oci_vector *v, usize stride, usize index) {
 	void *ptr = vec_index(v, stride, index);
 	memcpy(vec_push(v, stride), ptr, stride);
 	return ptr;
 }
 
-inline void vec_remove(vector *v, usize stride, usize index) {
+inline void vec_remove(oci_vector *v, usize stride, usize index) {
 	memcpy(vec_index(v, stride, index), vec_index(v, stride, vec_len(v, stride) - 1), stride);
 	vec_pop(v, stride);
 }

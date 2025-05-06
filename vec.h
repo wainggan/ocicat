@@ -21,7 +21,7 @@ vectors should be created using `vec_new()`, then freed with `vec_free()`.
 
 there are also type safe macros of all available functions, such as `v_vec()` for defining a type, `v_new()` for creating a vector, etc.
 */
-typedef struct vector {
+typedef struct oci_vector {
 	void *buf;
 	// capacity in bytes
 	usize cap;
@@ -29,7 +29,7 @@ typedef struct vector {
 	usize len;
 	// associated allocator
 	oci_allocator *alloc;
-} vector;
+} oci_vector;
 
 /*
 creates a new vector using the supplied allocator `alloc`.
@@ -37,59 +37,59 @@ no allocation will actually be performed until required, such as for calling `ve
 
 the vector can later be freed using `vec_free()`. you must ensure that `alloc` is still valid until at least this point.
 */
-vector vec_new(oci_allocator *alloc);
+oci_vector vec_new(oci_allocator *alloc);
 /*
 deallocates any memory a vector might have allocated. 
 */
-void vec_free(vector *v);
+void vec_free(oci_vector *v);
 
 /*
 attempts to (re)allocate such that the vector's capacity is at least `capacity` (in bytes).
 if `capacity <= vec_cap(&v, 1)`, this means it may do nothing at all.
 */
-void vec_reserve_exact(vector *v, usize capacity);
+void vec_reserve_exact(oci_vector *v, usize capacity);
 /*
 attempts to (re)allocate such that the vector's capacity is at least `capacity` (in bytes).
 this works like `vec_reserve_exact()`, except it may speculatively allocate more memory than requested.
 */
-void vec_reserve(vector *v, usize capacity);
+void vec_reserve(oci_vector *v, usize capacity);
 
 // gets a pointer to the vector's allocated memory.
-void *vec_ptr(const vector *v);
+void *vec_ptr(const oci_vector *v);
 // gets the vector's allocated capacity.
-usize vec_cap(const vector *v, usize stride);
+usize vec_cap(const oci_vector *v, usize stride);
 // gets the vector's length.
-usize vec_len(const vector *v, usize stride);
+usize vec_len(const oci_vector *v, usize stride);
 /*
 sets the vector's length.
 UB: this length should never "contain" possibly uninitialized data.
 */
-void vec_len_set(vector *v, usize stride, usize len);
+void vec_len_set(oci_vector *v, usize stride, usize len);
 
 /*
 returns a pointer to an element of the vector.
 
 UB: `index` must be a valid element, such that `index < vec_len(&v, stride)`.
 */
-void *vec_index(const vector *v, usize stride, usize index); 
+void *vec_index(const oci_vector *v, usize stride, usize index); 
 
 /*
 increments the length of the vector to accomodate for a new element, then returns the pointer to that new space.
 
 UB: you must set this element to valid data.
 */
-void *vec_push(vector *v, usize stride);
+void *vec_push(oci_vector *v, usize stride);
 /*
 decrements the length of the vector to accomodate for a new element, then returns the pointer to the old element.
 this pointer should be used as soon as possible. `NULL` is returned if `vec_len(&v, stride) == 0`.
 */
-void *vec_pop(vector *v, usize stride);
+void *vec_pop(oci_vector *v, usize stride);
 
-void *vec_insert(vector *v, usize stride, usize index);
-void vec_remove(vector *v, usize stride, usize index);
+void *vec_insert(oci_vector *v, usize stride, usize index);
+void vec_remove(oci_vector *v, usize stride, usize index);
 
 
-#define v_vec(type) union { typeof(type) *T; vector _; }
+#define v_vec(type) union { typeof(type) *T; oci_vector _; }
 
 #define OCI_VEC_TYPEOF(v) typeof(*(v)->T)
 #define OCI_VEC_DATAOF(v) &(v)->_
